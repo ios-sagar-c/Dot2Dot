@@ -1,0 +1,166 @@
+
+<html >
+<head>
+
+    <script src="scripts/onsenui.min.js"></script>
+    <link href="css/onsenui.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" />
+    <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <script src="angularjs/angular.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">-->
+
+    <script src="scripts/jquery.min.js"></script>
+
+    <link href="css/all.css" rel="stylesheet" />
+    <link href="css/all.min.css" rel="stylesheet" />
+    <script src="scripts/all.js"></script>
+    <link href="css/all.min.css" rel="stylesheet" />
+
+    <style>
+        label {
+            color: #11113c;
+            text-align: left;
+            margin-top: 15%;
+        }
+    </style>
+
+
+</head>
+<body ng-app="Dot2DotTrainingApp" ng-controller="Login">
+    <div data-role="page" id="index">
+        <ons-page>
+            <ons-toolbar>
+                <div class="toolbar__center">
+                    <img src="images/d2d logo.png" style="padding-top:10px;" />
+
+                </div>
+                <!--<div class="right">
+                    <ons-toolbar-button onclick="fn.toggleMenu()" >
+                        <ons-icon icon="ion-navicon, material:md-menu" style="background-color:black"></ons-icon>
+                    </ons-toolbar-button>
+                </div>-->
+
+
+            </ons-toolbar>
+            <ons-card style="margin-top:40%">
+                <form method="post">
+                    <div style="text-align: center;">
+                        <Div id="errormessage" style="color:red"></Div>
+                        <p>
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="text-input text-input--material" ng-model="UserName" placeholder="UserName" />
+                        </p>
+                        <p>
+                            <i class="fas fa-unlock"></i>
+                            <input type="password" class="text-input text-input--material" ng-model="Password" placeholder="Password" />
+                        </p>
+
+                        <p style="margin-top: 30px;">
+                            <ons-button id="buttonnext" style="background-color:#0076ff; border-radius: 12px;" ng-click="SubmitCredentials()">Login</ons-button>
+                        </p>
+
+
+
+                        <!--<label>Or login with</label>
+            <p>
+            <i class="fa fa-facebook-square" style="font-size:34px; color:darkblue;"></i>
+            <i class="fa fa-google-plus-official" style="font-size:34px;color:red;"></i>
+            <i class="fa fa-twitter-square" style="font-size:34px; color:deepskyblue;" ></i>
+            </p>-->
+
+
+                    </div>
+                </form>
+            </ons-card>
+</ons-page>
+    </div>
+	
+	<script type="text/javascript">
+	   var app=angular.module("Dot2DotTrainingApp",[]);
+	   app.controller("Login",function($scope,$http)
+	   {
+	      $scope.UserName="";
+          $scope.Password = "";
+
+         window.localStorage.setItem("CompletedAssignmentId","");
+
+		  $scope.ErrorMessage="Invalid";
+	      var myJSON;
+	   $scope.SubmitCredentials=function(){
+	       if($scope.UserName=="")
+		   {
+		     var myEl = angular.element( document.querySelector( '#errormessage' ) );
+             myEl.text('Please Enter UserName'); 
+             return  false;			 
+		   }
+		   else if( $scope.Password=="")
+		   {
+		      var myEl = angular.element( document.querySelector( '#errormessage' ) );
+             myEl.text('Please Enter Password'); 
+             return  false;		
+		   }
+		   
+		  
+		  
+		   $http({
+            url: "http://appsdev.in/Dot2DotTraining/api/Login",
+            method: 'POST',
+            data: "{'UserName':'" + $scope.UserName + "','Password':'"+$scope.Password+"'}",
+            headers: { 'content-type': 'application/json' }
+        }).then(function (d) {
+		     if(d.data.loginDetails=="")
+			 {
+			     var myEl = angular.element( document.querySelector( '#errormessage' ) );
+             myEl.text('Invalid UserName or Password'); 
+             return  false;	
+			 }
+		
+            console.log(d);
+            myJSON = JSON.stringify(d.data.loginDetails);
+            window.localStorage.setItem("StudentId", d.data.loginDetails.studentId.toString());
+		    window.localStorage.setItem("StudentAssignmentDetails", myJSON);
+			  window.location.href ='MainHome.html';
+        });
+	
+	  
+	   };
+	   
+	   	//localstorage.setItem("Logindetails",myJSON);
+
+
+
+
+        function captureSuccess(mediaFiles) {
+            var i, len;
+            for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+
+                alert(1);
+                // uploadFile(mediaFiles[i]);
+            }
+        }
+
+        // Called if something bad happens.
+        // 
+        function captureError(error) {
+            var msg = 'An error occurred during capture: ' + error.code;
+            navigator.notification.alert(msg, null, 'Uh oh!');
+        }
+
+        // A button will call this function
+        //
+        function captureVideo() {
+            // Launch device video recording application, 
+            // allowing user to capture up to 2 video clips
+            navigator.device.capture.captureVideo(captureSuccess, captureError, { limit: 1});
+        }
+
+
+		  
+	   });
+	
+	</script>
+	
+</body>
+</html>

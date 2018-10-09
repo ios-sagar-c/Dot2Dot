@@ -1,0 +1,11 @@
+{
+  "android": {
+    "release": {
+      "keystore": "c:\\dev\\jd-release-key.keystore",
+      "storePassword": "techlore",
+      "alias": "android-key",
+      "password": "techlore",
+      "keystoreType": ""
+    }
+  }
+}

@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/video.js"></script>
+    <link href="css/video-js.css" rel="stylesheet" />
+    <script src="scripts/onsenui.min.js"></script>
+    <link href="css/onsenui.css" rel="stylesheet" />
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="scripts/index.js"></script>
+    <link href="css/onsen-css-components.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" />
+    <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <script src="angularjs/angular.min.js"></script>
+    <script src="angularjs/angular-sanitize.js"></script>
+
+
+
+
+</head>
+
+<body ng-app="Dot2DotTrainingApp" ng-controller="synopsisText1">
+   
+    <div data-role="page" id="index">
+        <ons-page>
+            <ons-toolbar style="position: fixed; top:44px; background-color:#F04729; color:white;font-size:16px;height:50px">
+
+                <label style="margin-top:20px;margin-left:5px;font-weight:bold;font-size:16px">Synopsis</label>
+
+
+            </ons-toolbar>
+            <ons-toolbar>
+                <div class="toolbar__center">
+                    <img src="images/d2d logo.png" style="padding-top:10px;" />
+
+                </div>
+
+            </ons-toolbar>
+
+
+
+            <div class="page_content">
+
+                <div class="page__background">
+                    <!--<ons-list-header style="background-color:#F04729; color:white;font-size:16px">Synopsis</ons-list-header>-->
+                    <ons-card style="margin-top:46px;">
+                        <!--<div class="title">
+                            Synopsis
+                        </div>-->
+                        <div class="content" >
+                            <!--<ons-list>
+        <ons-list-item>{{synopsisText}}</ons-list-item>
+    </ons-list>-->
+                            <p ng-bind-html="synopsisText"></p>
+                        </div>
+                    </ons-card>
+                </div>
+            </div>
+
+            <ons-bottom-toolbar modifier="transparent aligned" style="background-color:#11113c">
+                <label class="tabbar__item">
+                    <button class="tabbar__button" id="next" style="background-color:#0076ff; color:white" ng-click="NextStep()">
+                        Next
+                    </button>
+                </label>
+            </ons-bottom-toolbar>
+
+
+        </ons-page>
+    </div>
+
+    <script type="text/javascript">
+        var app = angular.module("Dot2DotTrainingApp", ['ngSanitize']);
+        app.controller("synopsisText1", function ($scope) {
+
+
+            $scope.assignmentName = "";
+
+            $scope.synopsisText = "";
+
+            var assignmentId = parseInt(window.localStorage.getItem("SelectedAssignmentId"));
+            var AssignmentDetails = JSON.parse(window.localStorage.getItem("StudentAssignmentDetails"));
+
+            window.localStorage.setItem("AssignmentId", assignmentId.toString());
+
+            for (var i = 0; i < AssignmentDetails.studentAssignmentDetailsList.length; i++) {
+                if (parseInt(AssignmentDetails.studentAssignmentDetailsList[i]["assignmentId"]) == assignmentId) {
+                    $scope.assignmentName = AssignmentDetails.studentAssignmentDetailsList[i]["assignmentName"];
+                    $scope.synopsisText = AssignmentDetails.studentAssignmentDetailsList[i]["synposisText"];
+                }
+
+            }
+
+
+            $scope.NextStep = function () {
+                window.location.href = 'Synopsis.html';
+            };
+
+
+        });
+
+    </script>
+
+</body>
+</html>

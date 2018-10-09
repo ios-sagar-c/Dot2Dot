@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/video.js"></script>
+    <link href="css/video-js.css" rel="stylesheet" />
+    <script src="scripts/onsenui.min.js"></script>
+    <link href="css/onsenui.css" rel="stylesheet" />
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="scripts/index.js"></script>
+    <link href="css/onsen-css-components.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" />
+    <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <script src="angularjs/angular.min.js"></script>
+
+
+
+
+</head>
+
+<body ng-app="Dot2DotTrainingApp" ng-controller="synopsis">
+    <div data-role="page" id="index">
+        <ons-page>
+            <ons-toolbar style="position: fixed; top:44px; background-color:#F04729; color:white;font-size:16px;height:50px">
+
+                <label style="margin-top:20px;margin-left:5px;font-weight:bold;font-size:16px">Synopsis</label>
+
+
+            </ons-toolbar>
+            <ons-toolbar>
+                <div class="toolbar__center">
+                    <img src="images/d2d logo.png" style="padding-top:10px;" />
+
+                </div>
+
+            </ons-toolbar>
+
+
+            <onslist>
+                <ons-list-header style="background-color:#F04729; color:white;font-size:16px">Synopsis</ons-list-header>
+                <div class="content" style="text-align: center; margin-top:20px;">
+
+                    <div ng-show="synopsisMedia!=''">
+                        <ons-list-item>
+                            <div style="margin-left:0px;">
+                                <video id="my_video_1" class="video-js vjs-default-skin" controls preload="auto" width="330" height="220"
+                                       data-setup='{}'>
+                                    <source src="{{synopsisMedia}}" type='video/mp4'>
+
+                                </video>
+
+                            </div>
+
+                        </ons-list-item>
+                    </div>
+
+
+
+                    <!--<label>Or login with</label>
+            <p>
+            <i class="fa fa-facebook-square" style="font-size:34px; color:darkblue;"></i>
+            <i class="fa fa-google-plus-official" style="font-size:34px;color:red;"></i>
+            <i class="fa fa-twitter-square" style="font-size:34px; color:deepskyblue;" ></i>
+            </p>-->
+
+
+                </div>
+
+                <ons-bottom-toolbar modifier="transparent aligned" style="background-color:#11113c">
+                    <label class="tabbar__item">
+                        <button class="tabbar__button" id="next" style="background-color:#0076ff; color:white" ng-click="NextStep()">
+                            Next
+                        </button>
+                    </label>
+                </ons-bottom-toolbar>
+
+
+        </ons-page>
+    </div>
+	
+	<script type="text/javascript">
+	   var app=angular.module("Dot2DotTrainingApp",[]);
+	   app.controller("synopsis",function($scope)
+	   {
+	   var video = videojs('my_video_1');
+
+	     $scope.assignmentName="";
+		 $scope.synopsisMedia="";
+		
+	   
+	     var assignmentId= parseInt(window.localStorage.getItem("SelectedAssignmentId"));
+         var AssignmentDetails = JSON.parse(window.localStorage.getItem("StudentAssignmentDetails"));
+
+         window.localStorage.setItem("AssignmentId", assignmentId.toString());
+
+		for(var i=0;i<AssignmentDetails.studentAssignmentDetailsList.length;i++)
+		{
+		   if(parseInt(AssignmentDetails.studentAssignmentDetailsList[i]["assignmentId"])==assignmentId)
+		   {
+		      $scope.assignmentName=AssignmentDetails.studentAssignmentDetailsList[i]["assignmentName"];
+			  $scope.synopsisMedia=AssignmentDetails.studentAssignmentDetailsList[i]["synposisMedia"];
+			 
+		   }
+		
+		}		  
+		  
+			   
+        $scope.NextStep=function()
+		{
+		    //alert("Ready for question list");
+			 window.location.href ='FirstQuestion.html';
+		};		 
+
+		
+	   });
+	
+	</script>
+	
+</body>
+</html>

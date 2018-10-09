@@ -1,0 +1,183 @@
+﻿<html>
+<head>
+    <script src="angularjs/angular.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Lato:300,400,700,900');
+
+        * {
+            pading: 0;
+            margin: 0;
+            font-family: "Lato", sans-serif;
+            position: relative;
+        }
+
+        .timeline {
+            padding: 40px 0px;
+            width: 80%;
+            margin-left: 10%;
+            margin-bottom: 40px;
+        }
+
+            .timeline:before {
+                content: "";
+                position: absolute;
+                top: 40px;
+                left: 65px;
+                width: 3px;
+                height: calc(100% - -42px);
+                background: #c0392b;
+            }
+
+            .timeline .column {
+                margin: 40px 40px 40px 120px;
+            }
+
+                .timeline .column .title h1 {
+                    font-size: 10px;
+                    color: #ffff;
+                    font-family: serif;
+                    letter-spacing: 3px;
+                }
+
+                    .timeline .column .title h1:before {
+                        content: "";
+                        position: absolute;
+                        left: -62px;
+                        top: 86px;
+                        width: 10px;
+                        height: 10px;
+                        background: #fff;
+                        border: 3px solid #c0392b;
+                    }
+
+                .timeline .column .title h2 {
+                    margin-top: -60px;
+                    font-size: 33px;
+                }
+
+                .timeline .column .description p {
+                    font-size: 24px;
+                    line-height: 20px;
+                    margin-left: 20px;
+                    margin-top: 10px;
+                    font-family: serif;
+                }
+
+                .timeline .column .description {
+                    border-left: 1px solid #000;
+                }
+
+        .main {
+            width: 80%;
+            margin-left: 10%;
+            margin-top: 80px;
+        }
+
+            .main h1 {
+                font-size: 40px;
+                line-height: 60px;
+            }
+
+            .main p {
+                font-size: 13px;
+                line-height: 20px;
+                font-family: serif;
+                text-align: right;
+            }
+
+        .timeline .column .title h2 {
+            margin-top: 69px;
+        }
+    </style>
+</head>
+<body>
+
+
+    <body ng-app="Dot2DotTrainingApp" ng-controller="MapOfEvents">
+        <ons-page class="page-content">
+            <ons-toolbar style="position: fixed; top:44px; background-color:#F04729; color:white;font-size:16px;height:50px">
+                <label style="margin-top:20px;margin-left:3px;font-weight:bold;font-size:16px">Map of Events</label>
+            </ons-toolbar>
+            <ons-toolbar>
+                <div class="toolbar__center">
+                    <img src="images/d2d logo.png" style="padding-top:10px;" />
+                </div>
+            </ons-toolbar>
+            <!--<section class="timeline" style="margin-top:20px;">
+        <ul>
+            <li ng-repeat="e in EventsData">
+                <div class="content">
+                    <h2>
+                        <time>{{e.eventTitle}}</time>
+                    </h2>
+                    <p>{{e.eventDescription}}</p>
+                </div>
+            </li>
+
+
+        </ul>
+    </section>-->
+            <!--<div class="container" style="width:80%">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main-timeline" style="margin-top:80px;">
+                    <div class="timeline" ng-repeat="e in EventsData">
+                        <a href="#" class="timeline-content">
+                            <h6 class="title">{{e.eventTitle}} </h6>
+                            <p class="description">
+                                {{e.eventDescription}}
+                            </p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+            <div class="main">
+                <h1>Timeline</h1>
+
+            </div>
+
+            <div class="timeline" ng-repeat="e in EventsData">
+                <div class="column">
+                    <div class="title">
+                        <h1>step1</h1>
+                        <h2> {{e.eventTitle}}</h2>
+                    </div>
+                    <div class="description">
+                        <p>  {{e.eventDescription}} </p>
+                    </div>
+                </div>
+
+               </div>
+                
+
+                <ons-bottom-toolbar modifier="transparent aligned" style="background-color:#11113c">
+                    <label class="tabbar__item">
+                        <button class="tabbar__button" id="next" style="background-color:#0076ff; color:white" ng-click="NextStep()">
+                            Next
+                        </button>
+                        <ons-button id="" style="background-color:#11113c; width:100%; height:70px;" ng-click="NextQuestion(CurrentQuestion.questionId)">Submit</ons-button>-->
+
+                    </label>
+                </ons-bottom-toolbar>
+        </ons-page>
+        <script type="text/javascript">
+            var app = angular.module("Dot2DotTrainingApp", []);
+            app.controller("MapOfEvents", function ($scope) {
+
+                $scope.EventsData = JSON.parse(window.localStorage.getItem("mapOfEvents"));
+
+
+                $scope.NextStep = function () {
+                    window.location.href = 'Instructions.html';
+                };
+
+            });
+
+        </script>
+    </body>
+</html>
+
+    

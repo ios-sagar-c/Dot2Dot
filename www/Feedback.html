@@ -1,0 +1,363 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>Feedback</title>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/video.js"></script>
+    <script src="scripts/onsenui.min.js"></script>
+    <link href="css/video-js.css" rel="stylesheet" />
+    <link href="css/onsenui.css" rel="stylesheet" />
+    <script src="scripts/index.js"></script>
+    <link href="css/onsen-css-components.css" rel="stylesheet" />
+    <!--<link href="css/onsen-css-components.min.css" rel="stylesheet" />-->
+    <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <script src="angularjs/angular.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <style>
+        .list-item__center {
+            padding: 0em;
+            line-height: 1.2em;
+            min-height: 44px;
+        }
+
+        .range__input {
+            background-size: 4px;
+        }
+
+        :checked + .segment__button {
+            background-color: #0076ff;
+            color: white;
+        }
+
+        .segment__button {
+            color: #0076ff;
+        }
+        .select-input--material {
+        font-size:13px;
+        }
+    </style>
+</head>
+<body ng-app="Dot2DotTrainingApp" ng-controller="Feedback">
+    <div data-role="page" id="index">
+        <ons-page class="page-content" style="font-size:14px">
+            <ons-toolbar style="position: fixed; top:44px; background-color:#F04729; color:white;font-size:16px;height:50px">
+                <label style="margin-top:20px;margin-left:5px;font-weight:bold;font-size:16px;">Feedback</label>
+            </ons-toolbar>
+            <ons-toolbar>
+                <div class="toolbar__center">
+                    <img src="images/d2d logo.png" style="padding-top:10px;" />
+                </div>
+                <div class="right">
+                    <ons-toolbar-button onclick="fn.toggleMenu()">
+
+                        <ons-icon icon="ion-home" ng-click="ShowMainHomePage()" style="color:black"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+
+            </ons-toolbar>
+
+            <div class="content" style="text-align: center; margin-top:40px;">
+                <ons-list modifier="static">
+                    <!--<ons-list-header style="background-color:#F04729; color:white">Feedback</ons-list-header>-->
+                </ons-list>
+                <onslist id="FeedbackPart1" ng-show="IsFirstPart=='Y'">
+                    <ons-list-item modifier="nodivider">
+                        <div style="width:100%;margin-bottom:4%;margin-top:3%">
+                            <div style="float:left;width:90%">
+                                <ons-select ng-model="SelectedStudentId" name="SelectedStudentId" style="font-size:13px;width:90%;" id="listStudentName">
+                                    <option style="font-size:13px;" value="0">---Select---</option>
+                                    <option ng-repeat="e in studentList" value="{{e.studentId}}" style="font-size:13px;">{{e.studentName}}</option>
+                                </ons-select>
+                            </div>
+                        </div>
+                    </ons-list-item>
+                        <ons-list-item modifier="nodivider">
+                            <div ng-repeat="e in feedbackQuestionList" style="width:100%">
+                                <div style="width:100%;text-align:left;float:left">
+                                    <label>{{e.questionText}}</label>
+                                </div>
+                                <div style="width:80%; float:left;background-size:4px" " >
+                                    <ons-range style="width: 100%;" value="0" min="0" max="5" id="Range{{e.questionNo}}" step="0.1"></ons-range>
+                                </div>
+                                <div style="width:18%; float:left">
+                                    <span id="sinput{{e.questionNo}}" style="width: 18%;">0</span>
+                                </div>
+                            </div>
+
+                        </ons-list-item>
+
+                        <ons-list-item modifier="nodivider">
+                            <div class="segment" style="width:95%; border:none">
+                                <div class="segment__item">
+                                    <input type="radio" class="segment__input" name="navi-segment-a" checked ng-click="ShowTab('App')">
+                                    <div class="segment__button" style="font-weight: bold;border:1px solid #0076ff">Successful Application</div>
+                                </div>
+                                <div class="segment__item">
+                                    <input type="radio" class="segment__input" name="navi-segment-a" ng-click="ShowTab('Diff')">
+                                    <div class="segment__button" style="font-weight: bold;border:1px solid #0076ff">Delivery Challenges</div>
+                                </div>
+                            </div>
+
+                        </ons-list-item>
+
+                        <ons-list-item modifier="nodivider">
+                            <div id="App" class="tab content active" ng-show="ActiveTab=='App'"style="width:90%">
+                                <ons-row style="width:90% !important">
+                                    <ons-col>
+                                        <input ng-model="addApp" class="text-input text-input--material" style="width:70%;float:left" />
+                                        <i class="	fa fa-plus-square" id="btnAddApp" ng-click="addAppItems()" style="font-size:34px; color:deepskyblue;width:30%;float:left"></i>
+
+                                        <ul style="float:left;margin-top:0px" ">
+                                            <li ng-repeat="point in AppPointList" contenteditable="false" style="text-align:left;overflow-wrap: break-word; width:100%">{{point}}</li>
+                                        </ul>
+                                    </ons-col>
+                                </ons-row>
+                            </div>
+                            <div id="Diff" class="tab	content" ng-show="ActiveTab=='Diff'" style="width:90%">
+                                <ons-row style="width:90% !important">
+                                    <ons-col>
+                                        <input ng-model="addDiff" class="text-input text-input--material" style="width:70%;float:left" />
+                                        <i class="	fa fa-plus-square" id="btnAddApp" ng-click="addDiffItems()" style="font-size:34px; color:deepskyblue;width:30%;float:left"></i>
+
+                                        <ul style="float:left;margin-top:0px">
+                                            <li ng-repeat="point in DiffPointList" contenteditable="false" style="text-align:left;overflow-wrap: break-word; width:100%">{{point}}</li>
+                                        </ul>
+                                    </ons-col>
+                                </ons-row>
+                            </div>
+                        </ons-list-item>
+</onslist>
+                <onslist id="FeedbackPart2" ng-show="IsFirstPart=='N'">
+                    <ons-list-item modifier="nodivider">
+                        <div>
+                            <label>Additional thoughts for continued success:</label>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item>
+                        <textarea class="textarea" rows="10" cols="32" placeholder="Other feedback" id="txtOtherFeedback" style="width:95%"></textarea>
+                    </ons-list-item>
+                </onslist>
+            </div>
+            <ons-bottom-toolbar modifier="transparent aligned" style="background-color:#11113c">
+                <label class="tabbar__item">
+                    <button class="tabbar__button" id="Submit" style="background-color:#0076ff; color:white" ng-click="SubmitFeedback()">
+                        Submit
+                    </button>
+                </label>
+            </ons-bottom-toolbar>
+        </ons-page>
+    </div>
+
+    <script type="text/javascript">
+
+        var app = angular.module("Dot2DotTrainingApp", []);
+
+        app.controller("Feedback", function ($scope, $http) {
+            $scope.ActiveTab = 'App';
+            $scope.IsFirstPart = 'Y';
+            var StudentId = parseInt(window.localStorage.getItem("StudentId"));
+
+            $scope.studentList = $.parseJSON(window.localStorage.getItem("studentListForFeedback"));
+            $scope.feedbackQuestionList = $.parseJSON(window.localStorage.getItem("feedbackQuestionList"));
+
+            $scope.feedbackQuestionList.splice(-1);
+            $scope.feedbackQuestionList.splice(-1);   
+            $scope.feedbackQuestionList.splice(-1);         
+
+            setTimeout(function () {                            
+                // slider code for each five questions
+                for (var i = 0; i < $scope.feedbackQuestionList.length; i++) {
+                    $scope.GetRangeValue($scope.feedbackQuestionList[i]["questionNo"]);
+                }
+            }, 500);
+
+
+            $scope.GetRangeValue = function (questionNo)
+            {
+                var slider1 = document.getElementById("Range" + questionNo);
+                var output1 = document.getElementById("sinput" + questionNo);
+                output1.innerHTML = slider1.value;
+                slider1.oninput = function () {
+                    output1.innerHTML = this.value;
+                }
+            }
+
+            //Submit feedback
+            $scope.SubmitFeedback = function () {
+
+               
+
+                var QuestionWithAnswer = [];
+
+                var SelectedStudenId = document.querySelector('ons-select').value;
+
+
+                if ($scope.IsFirstPart == 'Y') {
+
+                    var flagMandtoryCheck = false;
+                    for (var i = 0; i < $scope.feedbackQuestionList.length; i++) {
+                        var output1 = document.getElementById("sinput" + $scope.feedbackQuestionList[i]["questionNo"]);
+                        if (output1.innerHTML == "0" || output1.innerHTML == "0.0") {
+                            flagMandtoryCheck = true;
+                            break;
+                        }
+                    }
+
+                    if (SelectedStudenId=="0")
+                    {
+                        alert("Please select Student");
+                    }
+                    else if (flagMandtoryCheck == true)
+                    {
+                        alert("All the fields are mandtory");
+                    }
+                    else if ($scope.AppPointList.length == 0 && $scope.DiffPointList.length == 0) {
+                        alert("Successsful Application and Delivery Challenges both list should not be empty.");
+                    }
+                    else
+                    {
+                        $scope.IsFirstPart = 'N';
+                    }
+                    
+                } else {
+
+                    var OtherFeeedback = document.getElementById("txtOtherFeedback").value;
+
+                    //1. For range questions
+
+                    for (var i = 0; i < $scope.feedbackQuestionList.length; i++) {
+                        var output1 = document.getElementById("sinput" + $scope.feedbackQuestionList[i]["questionNo"]);
+                        QuestionWithAnswer.push({ 'StudentId': SelectedStudenId, 'QuestionId': $scope.feedbackQuestionList[i]["questionNo"], 'Answer': output1.innerHTML, 'FeedbackGivenBy': StudentId });
+                    }
+
+                    //2. For Techniques Applied
+                    var TechniquesApplied = "";
+                    for (var i = 0; i < $scope.AppPointList.length; i++) {
+                        if (i == 0)
+                        {
+                            TechniquesApplied = $scope.AppPointList[i];
+                        }
+                        else
+                        {
+                            TechniquesApplied = TechniquesApplied+"#"+$scope.AppPointList[i];
+                        }
+                    }
+
+                    QuestionWithAnswer.push({ 'StudentId': SelectedStudenId, 'QuestionId': 6, 'Answer': TechniquesApplied, 'FeedbackGivenBy': StudentId });
+
+                    //3. For Found Difficulties 
+                    var FoundDifficulties = "";
+                    for (var i = 0; i < $scope.DiffPointList.length; i++) {
+                        if (i == 0) {
+                            FoundDifficulties = $scope.DiffPointList[i];
+                        }
+                        else {
+                            FoundDifficulties = FoundDifficulties + "#" + $scope.DiffPointList[i];
+                        }
+                    }
+
+                    QuestionWithAnswer.push({ 'StudentId': SelectedStudenId, 'QuestionId': 7, 'Answer': FoundDifficulties, 'FeedbackGivenBy': StudentId });
+
+
+                    //4. Other Feedbacks 
+                    QuestionWithAnswer.push({ 'StudentId': SelectedStudenId, 'QuestionId': 8, 'Answer': OtherFeeedback, 'FeedbackGivenBy': StudentId });
+
+                    for (var i = 0; i < QuestionWithAnswer.length; i++) {
+
+                        $http({
+                            url: "http://appsdev.in/Dot2DotTraining/api/SubmitFeedback",
+                            method: 'POST',
+                            data: "{'StudentId':'" + QuestionWithAnswer[i]["StudentId"] + "','QuestionId':'" + QuestionWithAnswer[i]["QuestionId"] + "','Answer':'" + QuestionWithAnswer[i]["Answer"] + "','FeedbackGivenBy':'" + QuestionWithAnswer[i]["FeedbackGivenBy"] + "'}",
+                            headers: { 'content-type': 'application/json' },
+                        }).then(function (d) {
+                            
+
+                            });  
+
+                        if (i == QuestionWithAnswer.length - 1)
+                        {
+                            alert("Feedback has been submitted successfully");
+                            window.location.href = 'MainHome.html';
+                        }
+
+                    }                  
+                  
+                }
+            };
+
+            // Show clicked tab content
+            $scope.ShowTab = function (TabValue) {
+                $scope.ActiveTab = TabValue;
+            };
+
+            // Add app points
+            $scope.AppPointList = [];
+            $scope.addApp = "";
+            $scope.addAppItems = function () {
+                if ($scope.addApp != "") {
+
+                    var flagRepeat = false;
+                    for (var i = 0; i < $scope.AppPointList.length; i++) {
+                        if ($scope.AppPointList[i] == $scope.addApp)
+                        {
+                            flagRepeat = true;
+                            break;
+                        }
+                    }
+
+                    if (flagRepeat == true) {
+                        alert("You have already added this point. Please check.");
+                    }
+                    else {
+
+                        $scope.AppPointList.push($scope.addApp);
+                        $scope.addApp = "";
+                    }
+
+                }
+                else {
+                    alert("Please enter point");
+                }
+            };
+
+            //Add diff points
+            $scope.DiffPointList = [];
+            $scope.addDiff = "";
+            $scope.addDiffItems = function () {
+                if ($scope.addDiff != "") {
+
+
+                    var flagRepeatdiff = false;
+                    for (var i = 0; i < $scope.DiffPointList.length; i++) {
+                        if ($scope.DiffPointList[i] == $scope.addDiff) {
+                            flagRepeatdiff = true;
+                            break;
+                        }
+                    }
+
+                    if (flagRepeatdiff == true) {
+                        alert("You have already added this point. Please check.");
+                    }
+                    else {
+
+                        $scope.DiffPointList.push($scope.addDiff);
+                        $scope.addDiff = "";
+                    }                  
+
+                }
+                else {
+                    alert("Please enter point");
+                }
+            };
+            $scope.ShowMainHomePage = function () {
+                window.location.href = 'MainHome.html';
+            };
+
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Capture Video</title>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/onsenui.min.js"></script>
+    <link href="css/onsenui.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" />
+    <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <link href="css/all.css" rel="stylesheet" />
+    <link href="css/all.min.css" rel="stylesheet" />
+    <script src="scripts/all.js"></script>
+    <link href="css/all.min.css" rel="stylesheet" />
+    <!--<script type="text/javascript" charset="utf-8" src="json.js"></script>-->
+    <script type="text/javascript" charset="utf-8">
+
+
+
+        // Called when capture operation is finished
+        //
+        function captureSuccess(mediaFiles) {
+            var i, len;
+            for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+                uploadFile(mediaFiles[i]);
+            }
+        }
+
+        // Called if something bad happens.
+        //
+        function captureError(error) {
+            var msg = 'An error occurred during capture: ' + error.code;
+            navigator.notification.alert(msg, null, 'Uh oh!');
+        }
+
+        // A button will call this function
+        //
+        function captureVideo() {
+
+            // Launch device video recording application,
+            // allowing user to capture up to 2 video clips
+            navigator.device.capture.captureVideo(captureSuccess, captureError, { limit: 1, quality: 0, duration: 300 });
+        }
+
+        // Upload files to server
+        function uploadFile(mediaFile) {
+
+            $("#btnCapture").hide();
+            $("#prgLoader").show();
+            $("#divLoaderMessage").show();
+
+            alert('Video is being uploaded. Please wait...');
+
+            setTimeout(function () {
+
+                var StudentId = parseInt(window.localStorage.getItem("StudentId"));
+                var AssignmentId = parseInt(window.localStorage.getItem("AssignmentId"));
+                var QuestionId = 0;
+                if (window.localStorage.getItem("IsFirstVideoAnswer") == "Y") {
+                    QuestionId = 1;
+                }
+                else {
+                    QuestionId = 3;
+                }
+
+
+
+                var ft = new FileTransfer(),
+                    path = mediaFile.fullPath,
+                    name = mediaFile.name;
+
+                ft.upload(path,
+                    "http://appsdev.in/Dot2DotTraining/api/UploadMedia",
+                    function (result) {
+                        $("#prgLoader").hide();
+                        $("#divLoaderMessage").hide();
+                        //console.log('Upload success: ' + result.responseCode);
+                        //alert('Upload success: ' + result.responseCode);
+
+                        if (window.localStorage.getItem("IsFirstVideoAnswer") == "Y") {
+
+                            //Save Video Data
+                            $.ajax({
+                                type: "POST",
+                                url: "http://appsdev.in/Dot2DotTraining/api/SubmitAnswer",
+                                data: "{'StudentId':'" + StudentId + "','AssignmentId':'" + AssignmentId + "','QuestionId':'" + QuestionId + "','Answer':'" + name + "','AnswerType':'Text'}",
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    alert("Video has been uploaded successfully.");
+                                    window.location.href = 'OtherQuestions.html';
+                                },
+                                error: function (e) {
+                                    alert("Error while saving video : " + JSON.stringify(e));
+                                    $("#btnCapture").show();
+                                }
+                            });
+
+                        }
+                        else {
+
+
+                            //Save Video Data
+                            $.ajax({
+                                type: "POST",
+                                url: "http://appsdev.in/Dot2DotTraining/api/SubmitAnswer",
+                                data: "{'StudentId':'" + StudentId + "','AssignmentId':'" + AssignmentId + "','QuestionId':'" + QuestionId + "','Answer':'" + name + "','AnswerType':'Text'}",
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    alert("Video has been uploaded successfully.");
+                                    window.location.href = 'Finish.html';
+                                },
+                                error: function (e) {
+                                    alert("Error while saving video : " + JSON.stringify(e));
+                                    $("#btnCapture").show();
+                                }
+                            });
+
+
+                        }
+                    },
+                    function (error) {
+                        //console.log('Error uploading file ' + path + ': ' + error.code);
+                        alert('Error video file ' + path + ': ' + error.code);
+                        alert(JSON.stringify(error));
+                        $("#btnCapture").show();
+                    },
+                    //options);
+                    { fileName: name });
+
+            }, 200);
+        }
+
+
+
+        $(document).ready(function () {
+            $("#prgLoader").hide();
+            $("#divLoaderMessage").hide();
+
+        });
+
+    </script>
+</head>
+<body>
+    <div data-role="page" id="index">
+        <ons-page>
+            <ons-toolbar style="position: fixed; top:44px; background-color:#F04729; color:white;font-size:16px;height:50px">
+
+                <label style="margin-top:20px;margin-left:5px;font-weight:bold;font-size:16px">Answer Recording</label>
+
+
+            </ons-toolbar>
+            <ons-toolbar>
+                <div class="toolbar__center">
+                    <img src="images/d2d logo.png" style="padding-top:10px;" />
+
+                </div>
+
+            </ons-toolbar>
+
+            <!--<ons-list-header style="background-color:#F04729; color:white;font-size:16px">Answer Recording</ons-list-header>-->
+
+
+            <button class="button--large--cta" onclick="captureVideo();" style="width: 100%; margin-top:40%;" id="btnCapture">Tap To Capture Video &nbsp;&nbsp;<i class="fas fa-video"></i></button>
+            <div id="divLoaderMessage">Video is being uploaded. Please wait...</div>
+            <svg class="progress-circular progress-circular--indeterminate" id="prgLoader" style="margin-left:40%;margin-top:20%">
+                <circle class="progress-circular__background" />
+                <circle class="progress-circular__primary progress-circular--indeterminate__primary" />
+                <circle class="progress-circular__secondary progress-circular--indeterminate__secondary" />
+            </svg>
+        </ons-page>
+    </div>
+</body>
+</html>

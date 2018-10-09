@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="scripts/onsenui.min.js"></script>
+    <link href="css/video-js.css" rel="stylesheet" />
+    <link href="css/onsenui.css" rel="stylesheet" />
+    <script src="scripts/index.js"></script>
+    <link href="css/onsen-css-components.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" />
+
+    <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <script src="angularjs/angular.min.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="scripts/index.js"></script>
+</head>
+<body ng-app="Dot2DotTrainingApp" ng-controller="OtherQuestions">
+
+    <ons-page>
+        <ons-toolbar style="position: fixed; top:44px; background-color:#F04729; color:white;font-size:16px;height:50px">
+            
+            <label style="margin-top:20px;margin-left:5px;font-weight:bold;font-size:16px">Question</label>   
+           
+
+        </ons-toolbar>
+       <ons-toolbar>
+           <div class="toolbar__center">
+               <img src="images/d2d logo.png" style="padding-top:10px;" />
+
+           </div>
+
+        </ons-toolbar>
+
+
+        <!--<ons-list-header style="background-color:#F04729; color:white;font-size:16px">Question</ons-list-header>-->
+        <ons-card style="margin-top:20px">
+            <ons-list ng-repeat="e in Questions">
+                <ons-list-item>{{e.questionNo-1}}. {{e.questionText}}</ons-list-item>
+                <div ng-repeat="ansOpt in e.answerOptionsList">
+                    <ons-list>
+                        <ons-list-item>
+                            <ons-radio name="rbtn{{e.questionNo}}" input-id="{{ansOpt.optionNumber}}" ng-click="GetRadioButtonValue(ansOpt.optionNumber,e.questionNo-1)"> </ons-radio>
+
+                            <label for="radio-1" class="center">&nbsp;{{ansOpt.optionText}}</label>
+                        </ons-list-item>
+                    </ons-list>
+                </div>
+            </ons-list>
+        </ons-card>
+        <ons-bottom-toolbar modifier="transparent aligned" style="background-color:#11113c" ng-hide="AssigmentFinish==true">
+            <label class="tabbar__item">
+                <button class="tabbar__button" id="next" style="background-color:#0076ff; color:white" ng-click="NextStep()">
+                    Next
+                </button>
+            </label>
+        </ons-bottom-toolbar>
+    </ons-page>
+
+    <script type="text/javascript">
+        var app = angular.module("Dot2DotTrainingApp", []);
+        app.controller("OtherQuestions", function ($scope, $http) {
+            var StudentId = parseInt(window.localStorage.getItem("StudentId"));
+            var AssignmentId = parseInt(window.localStorage.getItem("AssignmentId"));
+            var AllQuestions = JSON.parse(window.localStorage.getItem("QuestionList"));
+            var QuestionList = [];
+            $scope.Questions = [];
+            for (var i = 1; i < AllQuestions.length - 1; i++) {
+                QuestionList.push(AllQuestions[i])
+            }
+            $scope.Questions = QuestionList;
+
+            //$scope.Questions = [{
+            //    'QuestionNo': 1, 'QuestionText': 'Are you satisfied with your video answer (technical content)?',
+            //    'AnsOptions': [{ 'optionNumber': 'A', 'optionText': 'Yes' },
+            //        { 'optionNumber': 'B', 'optionText': 'No' }]
+
+            //},
+            //    {
+            //        'QuestionNo': 2, 'QuestionText': 'Did you identify impact of the case you presented?',
+            //        'AnsOptions': [{ 'optionNumber': 'A', 'optionText': 'Yes' },
+            //            { 'optionNumber': 'B', 'optionText': 'No' }]
+            //    },
+            //    {
+            //        'QuestionNo': 3, 'QuestionText': 'Did you at the end of your case, correlate the case back to the clients business need (business need was XYZ)?',
+            //        'AnsOptions': [{ 'optionNumber': 'A', 'optionText': 'Yes' },
+            //            { 'optionNumber': 'B', 'optionText': 'No' }]
+
+            //    },
+            //    {
+            //        'QuestionNo': 4, 'QuestionText': 'Would you like to re-record your video based on your input?',
+            //        'AnsOptions': [{ 'optionNumber': 'A', 'optionText': 'Yes' },
+            //            { 'optionNumber': 'B', 'optionText': 'No' }]
+            //    }
+            //];
+
+            $scope.Question1SelectedAnswer = "";
+            //$scope.Question2SelectedAnswer = "";
+            //$scope.Question3SelectedAnswer = "";
+            //$scope.Question4SelectedAnswer = "";
+
+            $scope.GetRadioButtonValue = function (optionNumber, QuestionId) {
+                switch (QuestionId) {
+                    case 1: $scope.Question1SelectedAnswer = optionNumber; break;
+                    //case 2: $scope.Question2SelectedAnswer = optionNumber; break;
+                    //case 3: $scope.Question3SelectedAnswer = optionNumber; break;
+                    //case 4: $scope.Question4SelectedAnswer = optionNumber; break;
+
+                }
+            };
+
+            $scope.NextStep = function () {
+                if ($scope.Question1SelectedAnswer == "" || $scope.Question2SelectedAnswer == "" || $scope.Question3SelectedAnswer == "" || $scope.Question4SelectedAnswer == "") {
+                    //alert("Please answer all questions");
+                    alert("Please select answer");
+                }
+                else if ($scope.Question1SelectedAnswer == "A") {
+
+                    var QuestionAns = [];
+                    for (var i = 0; i < QuestionList.length; i++) {
+                        switch (i + 1) {
+                            case 1: QuestionAns.push({ 'QuestionId': QuestionList[i]["questionId"], 'Answer': $scope.Question1SelectedAnswer, 'AnswerType': QuestionList[i]["answerType"] }); break;
+                            //case 2: QuestionAns.push({ 'QuestionId': QuestionList[i]["questionId"], 'Answer': $scope.Question2SelectedAnswer, 'AnswerType': QuestionList[i]["answerType"] }); break;
+                            //case 3: QuestionAns.push({ 'QuestionId': QuestionList[i]["questionId"], 'Answer': $scope.Question3SelectedAnswer, 'AnswerType': QuestionList[i]["answerType"] }); break;
+                            //case 4: QuestionAns.push({ 'QuestionId': QuestionList[i]["questionId"], 'Answer': $scope.Question4SelectedAnswer, 'AnswerType': QuestionList[i]["answerType"] }); break;
+                        }
+                    }
+
+
+
+                    for (var j = 0; j < QuestionAns.length; j++) {
+
+                        $http({
+                            url: "http://appsdev.in/Dot2DotTraining/api/SubmitAnswer",
+                            method: 'POST',
+                            data: "{'StudentId':'" + StudentId + "','AssignmentId':'" + AssignmentId + "','QuestionId':'" + QuestionAns[j]["QuestionId"] + "','Answer':'" + QuestionAns[j]["Answer"] + "','AnswerType':'" + QuestionAns[j]["AnswerType"] + "'}",
+                            headers: { 'content-type': 'application/json' },
+                        }).then(function (d) {
+
+                           
+
+                        });
+
+                        if (j == QuestionAns.length - 1) {
+                            window.localStorage.setItem("IsFirstVideoAnswer", "N");
+                            window.location.href = 'FirstVAnswer.html';
+                        }
+
+                    }
+
+
+                }
+                else {
+                    var QuestionAns = [];
+                    for (var i = 0; i < QuestionList.length; i++) {
+                        switch (i + 1) {
+                            case 1: QuestionAns.push({ 'QuestionId': QuestionList[i]["questionId"], 'Answer': $scope.Question1SelectedAnswer, 'AnswerType': QuestionList[i]["answerType"] }); break;
+                            //case 2: QuestionAns.push({ 'QuestionId': QuestionList[i]["questionId"], 'Answer': $scope.Question2SelectedAnswer, 'AnswerType': QuestionList[i]["answerType"] }); break;
+                            //case 3: QuestionAns.push({ 'QuestionId': QuestionList[i]["questionId"], 'Answer': $scope.Question3SelectedAnswer, 'AnswerType': QuestionList[i]["answerType"] }); break;
+                            //case 4: QuestionAns.push({ 'QuestionId': QuestionList[i]["questionId"], 'Answer': $scope.Question4SelectedAnswer, 'AnswerType': QuestionList[i]["answerType"] }); break;
+                        }
+                    }
+
+                    for (var j = 0; j < QuestionAns.length; j++) {
+
+                        $http({
+                            url: "http://appsdev.in/Dot2DotTraining/api/SubmitAnswer",
+                            method: 'POST',
+                            data: "{'StudentId':'" + StudentId + "','AssignmentId':'" + AssignmentId + "','QuestionId':'" + QuestionAns[j]["QuestionId"] + "','Answer':'" + QuestionAns[j]["Answer"] + "','AnswerType':'" + QuestionAns[j]["AnswerType"] + "'}",
+                            headers: { 'content-type': 'application/json' },
+                        }).then(function (d) {
+
+                            
+                        });
+
+                        if (j == QuestionAns.length - 1) {
+                            window.location.href = 'Finish.html';
+                        }
+                    }
+
+                }
+
+            };
+
+        });
+
+    </script>
+
+</body>
+</html>

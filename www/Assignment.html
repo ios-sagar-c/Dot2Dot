@@ -1,0 +1,435 @@
+﻿
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>Assigment</title>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/video.js"></script>
+    <script src="scripts/onsenui.min.js"></script>
+    <link href="css/video-js.css" rel="stylesheet" />
+    <link href="css/onsenui.css" rel="stylesheet" />
+    <script src="scripts/index.js"></script>
+    <link href="css/onsen-css-components.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" />
+    <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <script src="angularjs/angular.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+
+    <style>
+        .rating {
+            color: #a9a9a9;
+            margin: 0;
+            padding: 0;
+            
+        }
+
+        ul.rating {
+            display: inline-block;
+        }
+
+        .rating li {
+            list-style-type: none;
+            display: inline-block;
+            padding: 1px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 40px;
+        }
+
+        .rating .filled {
+            color: #FFD700;
+        }
+       
+
+       
+    </style>
+
+</head>
+<body ng-app="Dot2DotTrainingApp" ng-controller="Assigment">
+    <ons-page>
+
+        <ons-toolbar>
+            <div class="toolbar__center">
+                <img src="images/d2d logo.png" style="padding-top:10px;" />
+
+            </div>
+            <div class="right">
+                <ons-toolbar-button onclick="fn.toggleMenu()">
+                    <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+                </ons-toolbar-button>
+            </div>
+
+
+        </ons-toolbar>
+
+        <div class="content" style="margin-top: 10px;">
+
+            <ons-list ng-hide="AssigmentFinish==true">
+
+                <div ng-show="CurrentQuestion.questionAudioOrVideoLink!=''">
+                    <ons-list-item>
+                        <div style="margin-left:0px;">
+                            <video id="my_video_1" class="video-js vjs-default-skin" controls preload="auto" width="330" height="220"
+                                   data-setup='{}'>
+                                <source src="{{CurrentQuestion.questionAudioOrVideoLink}}" type='video/mp4'>
+
+                            </video>
+
+                        </div>
+
+                    </ons-list-item>
+                </div>
+
+
+                <ons-list-item style="color: #11113c;">
+                    <div ng-app="">
+                        <ons-list-item>
+                            {{CurrentQuestion.questionNo}}   {{CurrentQuestion.questionText}}
+
+                        </ons-list-item>
+                        <div ng-show="CurrentQuestion.answerType=='Multiple Choice'">
+                            <div ng-repeat="e in CurrentQuestion.answerOptionsList">
+                                <ons-list-item>
+                                    <label class="checkbox">
+                                        <input type="checkbox" ng-model="e.Selected" class="checkbox__input">
+                                        <div class="checkbox__checkmark"></div>
+                                        {{e.optionText}}
+                                    </label>
+                                </ons-list-item>
+
+                            </div>
+                        </div>
+
+                        <div ng-show="CurrentQuestion.answerType=='Single Value Selection'">
+                            <div ng-repeat="e in CurrentQuestion.answerOptionsList">
+                                <ons-list>
+                                    <ons-list-item>
+                                        <ons-radio name="color" input-id="{{e.optionNumber}}" ng-click="GetRadioButtonValue(e.optionNumber)"> </ons-radio>
+                                        <!--<input type="radio" name="ans" ng-model="e.Selected" />-->
+                                        <label for="radio-1" class="center">&nbsp;{{e.optionText}}</label>
+                                    </ons-list-item>
+                                </ons-list>
+                            </div>
+                        </div>
+
+                        <div ng-show="CurrentQuestion.answerType=='Text' || CurrentQuestion.answerType=='Number'">
+                            <ons-list>
+                                <ons-list-item tappable>
+                                    <!--<ons-input id="name" modifier="underbar" float></ons-input>-->
+                                    <input type="text" class="text-input text-input--material" ng-model="TextboxValue" />
+                                </ons-list-item>
+                            </ons-list>
+                        </div>
+
+                        <div ng-show="CurrentQuestion.answerType=='Pointwise'">
+
+                            <ons-row>
+                                <ons-col>
+                                    <input ng-model="addMe" class="text-input text-input--material" style="margin-left:20px;" />
+                                </ons-col>
+
+                                <ons-col style="margin-left:10px;">
+                                    <i class="	fa fa-plus-square" id="Add" ng-click="addItem()" style="font-size:34px; color:deepskyblue;"></i>
+                                </ons-col>
+                            </ons-row>
+
+                            <ul>
+                                <li ng-repeat="point in PointList" contenteditable="false">{{point}}</li>
+                            </ul>
+                            <!--<ons-input ng-model="addMe"> </ons-input>-->
+
+                        </div>
+                        <!--<input type="button" value="Next" ng-click="NextQuestion()" />-->
+                    </div>
+
+                </ons-list-item>
+            </ons-list>
+            <div ng-show="AssigmentFinish==true">
+
+                <i class="fa fa-home fa-3x" aria-hidden="true" style="margin-left:300px;" ng-click="RedirectToHome()"></i>
+                <h1 style="text-align:center;color: #000000; margin-top:90px;">Thank You </h1>
+
+                <div star rating-value="ratingVal" max="5" on-hover="onHover" on-leave="onLeave" "></div>
+                <div>
+
+                    <p style="text-align:center;font-style:bold;">Rate Us: {{ratingVal}}</p>
+
+
+
+                </div>
+
+
+            </div>
+
+          
+
+        </div>
+
+       
+        <ons-bottom-toolbar modifier="transparent aligned" style="background-color:#11113c" ng-hide="AssigmentFinish==true">
+            <label class="tabbar__item">
+
+                <button class="tabbar__button" id="next" ng-click="NextQuestion(CurrentQuestion.questionId)">
+                    Submit
+                </button>
+                <!--<ons-button id="" style="background-color:#11113c; width:100%; height:70px;" ng-click="NextQuestion(CurrentQuestion.questionId)">Submit</ons-button>-->
+
+            </label>
+        </ons-bottom-toolbar>
+
+    </ons-page>
+
+    <script type="text/javascript">
+        var app = angular.module("Dot2DotTrainingApp", []);
+        app.controller("Assigment", function ($scope, $http) {
+            var video = videojs('my_video_1');
+            var StudentId = parseInt(window.localStorage.getItem("StudentId"));
+            var AssignmentId = parseInt(window.localStorage.getItem("AssignmentId"));
+            var QuestionList = [];
+            var SequenceNo = 1;         
+            $scope.CurrentQuestion = {};
+            $scope.AssigmentFinish = false;
+            $http({
+                url: "http://appsdev.in/Dot2DotTraining/api/GetStudentAssignmentQuestions",
+                method: 'POST',
+                data: "{'StudentId':'" + StudentId + "','AssignmentId':'" + AssignmentId + "'}",
+                headers: { 'content-type': 'application/json' },
+            }).then(function (d) {
+                QuestionList = d.data.questionList;
+
+                $scope.CurrentQuestion = QuestionList[SequenceNo - 1];
+
+                
+            });
+
+         
+           
+           
+         
+
+            $scope.SelectedRadioButtonValue = "";
+            $scope.GetRadioButtonValue = function (optionNumber) {
+                $scope.SelectedRadioButtonValue = optionNumber;
+            };
+
+            $scope.TextboxValue = "";
+
+
+            $scope.NextQuestion = function (QuestionId) {
+               
+                var Answer = "";
+                var Message = "";
+
+                if ($scope.CurrentQuestion.answerType == "Multiple Choice") {
+                    var IsOptionSelected = false;
+                    var cnt = 0;
+                    for (var i = 0; i < $scope.CurrentQuestion.answerOptionsList.length; i++) {
+                        if ($scope.CurrentQuestion.answerOptionsList[i].Selected == true) {
+                            if (cnt == 0) {
+                                Answer = $scope.CurrentQuestion.answerOptionsList[i]["optionNumber"];
+                            }
+                            else {
+                                Answer = Answer + "#" + $scope.CurrentQuestion.answerOptionsList[i]["optionNumber"];
+                            }
+
+                            cnt = cnt + 1;
+                        }
+                    }
+
+                    if (Answer == "") {
+                        Message = "Please select at least one option";
+                    }
+                }
+                else if ($scope.CurrentQuestion.answerType == "Single Value Selection") {
+                    if ($scope.SelectedRadioButtonValue != "") {
+                        Answer = $scope.SelectedRadioButtonValue;
+                    }
+                    else {
+                        Message = "Please select option";
+                    }
+
+                }
+                else if ($scope.CurrentQuestion.answerType == "Text" || $scope.CurrentQuestion.answerType == "Number") {
+
+                    if ($scope.TextboxValue != "") {
+                        if ($scope.CurrentQuestion.answerType == "Number") {
+                            if ($.isNumeric($scope.TextboxValue) == false)
+                            {
+                                Message = "Please enter number only";
+                                
+                            }
+                            else {
+                                Answer = $scope.TextboxValue;
+                            }
+                        }
+                        else
+                        {
+                            Answer = $scope.TextboxValue;
+                        }
+                    }
+                    else {
+                        Message = "Please enter answer";
+                    }
+                }
+                else if ($scope.CurrentQuestion.answerType == "Pointwise") {
+                    if ($scope.PointList.length > 0)
+                    {
+                        var cnt = 0;
+                        for (var i = 0; i < $scope.PointList.length; i++) {
+                            if (cnt == 0) {
+                                Answer = $scope.PointList[i];
+                            }
+                            else {
+                                Answer = Answer + "#" + $scope.PointList[i];
+                            }
+
+                            cnt = cnt + 1;
+                        }
+                    }
+                    else
+                    {
+                        Message = "Please enter answer";
+                    }
+                    
+                }
+
+                if (Message != "") {
+                    alert(Message);
+
+                }
+                else {
+
+                    $http({
+                        url: "http://appsdev.in/Dot2DotTraining/api/SubmitAnswer",
+                        method: 'POST',
+                        data: "{'StudentId':'" + StudentId + "','AssignmentId':'" + AssignmentId + "','QuestionId':'" + QuestionId + "','Answer':'" + Answer + "','AnswerType':'" + $scope.CurrentQuestion.ansType+"'}",
+                        headers: { 'content-type': 'application/json' },
+                    }).then(function (d) {
+                        console.log(d.data);
+                        $scope.SelectedRadioButtonValue = "";
+                        $scope.TextboxValue = "";
+                        $scope.PointList = [];
+                        $scope.addMe = "";
+                        SequenceNo = SequenceNo + 1;
+                        if (SequenceNo == QuestionList.length) {
+                            $scope.AssigmentFinish = true;
+                        }
+                        else {
+                            $scope.CurrentQuestion = QuestionList[SequenceNo - 1];
+                        }
+                       
+
+                    });               
+
+                }
+                
+            };
+
+            //$scope.txtPoint = [];
+            //$scope.addtxtPoint = function () {
+            //    $scope.txtPoint.push({});
+            //}
+
+            $scope.PointList = [];
+            var cnt = 0;
+            $scope.addItem = function () {
+                if ($scope.addMe != "") {
+                    //if (cnt < 2) {
+                    $scope.PointList.push($scope.addMe);
+                    $scope.addMe = "";
+                    //    cnt++;
+                    //} else {
+                    //    alert("You can not enter more than two points");
+                    //}
+                }
+                else {
+                    alert("Please enter answer");
+                }
+
+            };   
+
+
+            $scope.RedirectToHome = function () {
+               
+                window.location.href = 'Home.html';
+            };		 
+
+
+
+            $scope.max = 5;
+            $scope.ratingVal = 0;
+            $scope.readonly = false;
+            $scope.onHover = function (val) {
+                $scope.hoverVal = val;
+            };
+            $scope.onLeave = function () {
+                $scope.hoverVal = null;
+            }
+            $scope.onChange = function (val) {
+                $scope.ratingVal = val;
+            }
+
+        });
+        app.directive('star', function () {
+            return {
+                template: '<ul class="rating" ng-mouseleave="leave()">' +
+                '<li ng-repeat="star in stars" ng-class="star" ;" ng-click="click($index + 1)" ng-mouseover="over($index + 1)">' +
+                '\u2605' +
+                '</li>' +
+                '</ul>',
+                scope: {
+                    ratingValue: '=',
+                    max: '=',
+                    readonly: '@',
+                    onHover: '=',
+                    onLeave: '='
+                },
+                controller: function ($scope) {
+                    $scope.ratingValue = $scope.ratingValue || 0;
+                    $scope.max = $scope.max || 5;
+                    $scope.click = function (val) {
+                        if ($scope.readonly && $scope.readonly === 'true') {
+                            return;
+                        }
+                        $scope.ratingValue = val;
+                    };
+                    $scope.over = function (val) {
+                        $scope.onHover(val);
+                    };
+                    $scope.leave = function () {
+                        $scope.onLeave();
+                    }
+                },
+                link: function (scope, elem, attrs) {
+                    elem.css("text-align", "center");
+                    var updateStars = function () {
+                        scope.stars = [];
+                        for (var i = 0; i < scope.max; i++) {
+                            scope.stars.push({
+                                filled: i < scope.ratingValue
+                            });
+                        }
+                    };
+                    updateStars();
+
+                    scope.$watch('ratingValue', function (oldVal, newVal) {
+                        if (newVal) {
+                            updateStars();
+                        }
+                    });
+                    scope.$watch('max', function (oldVal, newVal) {
+                        if (newVal) {
+                            updateStars();
+                        }
+                    });
+                }
+            };
+
+        });
+
+    </script>
+</body>
+</html>

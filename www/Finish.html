@@ -1,0 +1,193 @@
+﻿
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>Assigment</title>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/video.js"></script>
+    <script src="scripts/onsenui.min.js"></script>
+    <link href="css/video-js.css" rel="stylesheet" />
+    <link href="css/onsenui.css" rel="stylesheet" />
+    <script src="scripts/index.js"></script>
+    <link href="css/onsen-css-components.css" rel="stylesheet" />
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" />
+    <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <script src="angularjs/angular.min.js"></script>
+
+    <link href="css/all.css" rel="stylesheet" />
+    <link href="css/all.min.css" rel="stylesheet" />
+    <script src="scripts/all.js"></script>
+    <link href="css/all.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+
+    <style>
+        .rating {
+            color: #a9a9a9;
+            margin: 0;
+            padding: 0;
+        }
+
+        ul.rating {
+            display: inline-block;
+        }
+
+        .rating li {
+            list-style-type: none;
+            display: inline-block;
+            padding: 1px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 40px;
+        }
+
+        .rating .filled {
+            color: #FFD700;
+        }
+    </style>
+
+</head>
+<body ng-app="Dot2DotTrainingApp" ng-controller="Finish">
+    <ons-page>
+
+        <ons-toolbar>
+            <div class="toolbar__center">
+                <img src="images/d2d logo.png" style="padding-top:10px;" />
+
+            </div>
+            <div class="right">
+                <ons-toolbar-button onclick="fn.toggleMenu()">
+                    <ons-icon icon="ion-home" ng-click="RedirectToHome()" style="color:black"></ons-icon>
+                </ons-toolbar-button>
+            </div>
+
+
+        </ons-toolbar>
+
+        <div class="content" style="margin-top: 10px;">
+          
+            <div>
+               <!--<i class="fa fa-home fa-3x" aria-hidden="true" style="margin-left:300px;" ng-click="RedirectToHome()"></i>-->
+               <ons-card style="margin-top:20px">
+                   <div style="text-align:center">
+                       <i class="far fa-thumbs-up fa-3x"></i> <br />
+                   </div>
+                   <div style=""><br />
+                       Thank you for participanting in this role-play.
+                   </div>                     
+                   <div style="width:100%"> <br />This now completes the process. We will be in touch with our analysis of your interaction.</div>
+                      
+               </ons-card>
+
+
+                   <!--<div star rating-value="ratingVal" max="5" on-hover="onHover" on-leave="onLeave" "></div>
+    <div>
+
+        <p style="text-align:center;font-style:bold;">Rate Us: {{ratingVal}}</p>
+
+
+
+    </div>-->
+
+
+</div>
+
+
+
+        </div>
+
+
+
+    </ons-page>
+
+    <script type="text/javascript">
+        var app = angular.module("Dot2DotTrainingApp", []);
+        app.controller("Finish", function ($scope, $http) {           
+            var StudentId = parseInt(window.localStorage.getItem("StudentId"));
+            var AssignmentId = parseInt(window.localStorage.getItem("AssignmentId"));           
+
+            var CompletedAssignments = window.localStorage.getItem("CompletedAssignmentId") + "," + AssignmentId;
+            window.localStorage.setItem("CompletedAssignmentId", CompletedAssignments);
+
+
+            $scope.RedirectToHome = function () {
+
+                window.location.href = 'MainHome.html';
+            };
+                       
+            $scope.max = 5;
+            $scope.ratingVal = 0;
+            $scope.readonly = false;
+            $scope.onHover = function (val) {
+                $scope.hoverVal = val;
+            };
+            $scope.onLeave = function () {
+                $scope.hoverVal = null;
+            }
+            $scope.onChange = function (val) {
+                $scope.ratingVal = val;
+            }
+
+        });
+        app.directive('star', function () {
+            return {
+                template: '<ul class="rating" ng-mouseleave="leave()">' +
+                '<li ng-repeat="star in stars" ng-class="star" ;" ng-click="click($index + 1)" ng-mouseover="over($index + 1)">' +
+                '\u2605' +
+                '</li>' +
+                '</ul>',
+                scope: {
+                    ratingValue: '=',
+                    max: '=',
+                    readonly: '@',
+                    onHover: '=',
+                    onLeave: '='
+                },
+                controller: function ($scope) {
+                    $scope.ratingValue = $scope.ratingValue || 0;
+                    $scope.max = $scope.max || 5;
+                    $scope.click = function (val) {
+                        if ($scope.readonly && $scope.readonly === 'true') {
+                            return;
+                        }
+                        $scope.ratingValue = val;
+                    };
+                    $scope.over = function (val) {
+                        $scope.onHover(val);
+                    };
+                    $scope.leave = function () {
+                        $scope.onLeave();
+                    }
+                },
+                link: function (scope, elem, attrs) {
+                    elem.css("text-align", "center");
+                    var updateStars = function () {
+                        scope.stars = [];
+                        for (var i = 0; i < scope.max; i++) {
+                            scope.stars.push({
+                                filled: i < scope.ratingValue
+                            });
+                        }
+                    };
+                    updateStars();
+
+                    scope.$watch('ratingValue', function (oldVal, newVal) {
+                        if (newVal) {
+                            updateStars();
+                        }
+                    });
+                    scope.$watch('max', function (oldVal, newVal) {
+                        if (newVal) {
+                            updateStars();
+                        }
+                    });
+                }
+            };
+
+        });
+
+    </script>
+</body>
+</html>
